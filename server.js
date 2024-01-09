@@ -8,7 +8,7 @@ app.use(cors());
 
 const server = http.createServer(app);
 const io = socketIO(server, { cors: {
-    origin: "http://localhost:5500",
+    origin: "http://brain-blitz-shawnliu.netlify.app",
     credentials: true
   } });
 
