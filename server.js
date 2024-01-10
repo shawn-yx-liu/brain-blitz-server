@@ -28,8 +28,10 @@ io.on('connection', (socket) => {
   })
 
   socket.on('join', (gameId) => {
-    if (!games[gameId] || games[gameId].length !== 1) {
-      io.emit("error", "invalid ID");
+    if (!games[gameId] || games[gameId].length < 1) {
+      io.emit("error", {playerId: socket.id, message: "Invalid ID"});
+    } else if (games[gameId].length >= 2) {
+      io.emit("error", {playerId: socket.id, message: "Lobby is already full"});
     } else {
       games[gameId].push({playerId: socket.id, score: null});
       io.emit("joinedGame", gameId);
@@ -38,44 +40,31 @@ io.on('connection', (socket) => {
 
   socket.on('startGame', (gameId) => {
     if (!games[gameId] || games[gameId].length !== 2) {
-      io.emit("error", "not enough players in lobby");
+      io.emit("error", {playerId: socket.id, message: "Not enough players in lobby"});
       return;
     }
 
-    fetch("https://opentdb.com/api.php?amount=10&type=multiple")
-      .then(response => response.json())
-      .then(data => {
-          const questions = data.results.map(item => {
-              // Condense the answers into one array and add an ID
-              const mappedItem = {
-                  id: nanoid(),
-                  question: decode(item.question),
-                  answers: item.incorrect_answers.map(answer => decode(answer)),
-                  correctAnswer: decode(item.correct_answer),
-                  selectedAnswer: ""
-              }
+    getQuestions(gameId, socket.id);
+  })
 
-              const randomIndex = Math.floor(Math.random() * 4); // index to insert the correct answer
-              mappedItem.answers.splice(randomIndex, 0, mappedItem.correctAnswer)
-              return mappedItem
-          })
+  socket.on('startSoloGame', () => {
+    const gameId = generateRandomCode(4);
+    io.emit("newGame", {playerId: socket.id, gameId});
 
-          io.emit('questions', {gameId, questions});
-      })
+    getQuestions(gameId, socket.id);
   })
 
   // Listen for score updates from clients
   socket.on('updateScore', (data) => {
     // Update the score for the incoming player and broadcast it to all connected clients
-
     const {gameId, score} = data;
     const players = games[gameId];
+
     if (players[0].playerId === socket.id) {
       players[0].score = score;
     } else {
       players[1].score = score;
     }
-    console.dir(games[gameId]);
 
     // check if both players have submitted their score
     if (typeof(players[0].score) === "number" && typeof(players[1].score) === "number") {
@@ -88,10 +77,10 @@ io.on('connection', (socket) => {
 
   // Clean up when a user disconnects
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    console.log("User disconnected");
     Object.keys(games).forEach(gameId => {
-      if (games[gameId].includes(player => player.playerId === socket.id)) {
-        delete games(gameId);
+      if (games[gameId].some(player => player.playerId === socket.id)) {
+        delete games[gameId];
       }
     })
   });
@@ -110,4 +99,28 @@ function generateRandomCode(length) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
+}
+
+function getQuestions(gameId, socketId) {
+  fetch("https://opentdb.com/api.php?amount=10&type=multiple")
+    .then(response => response.json())
+    .then(data => {
+        const questions = data.results.map(item => {
+            // Condense the answers into one array and add an ID
+            const mappedItem = {
+                id: nanoid(),
+                question: decode(item.question),
+                answers: item.incorrect_answers.map(answer => decode(answer)),
+                correctAnswer: decode(item.correct_answer),
+                selectedAnswer: ""
+            }
+
+            const randomIndex = Math.floor(Math.random() * 4); // index to insert the correct answer
+            mappedItem.answers.splice(randomIndex, 0, mappedItem.correctAnswer)
+            return mappedItem
+        })
+
+        io.emit('questions', {gameId, questions});
+    }
+  ).catch(_ => io.emit('error', {playerId: socketId, message: `Error while retrieving questions. Please try again.`}));
 }
