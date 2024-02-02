@@ -9,7 +9,7 @@ This is the server code for the [Brain Blitz](https://github.com/shawn8913/brain
 [![Webpack][Webpack.js]][Webpack-url]
 
 ### Deployed With
-[![Render][Render.js]][Render-url]
+[![Heroku][Heroku.js]][Heroku-url]
 
 ## Getting Started
 ### Build and Run the application:
@@ -36,5 +36,5 @@ $ npm start
 [Javascript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [Webpack.js]: https://img.shields.io/badge/Webpack-20232A?style=for-the-badge&logo=webpack
 [Webpack-url]: https://webpack.js.org/
-[Render.js]: https://img.shields.io/badge/Render-20232A?style=for-the-badge&logo=render
-[Render-url]: https://render.com/
+[Heroku.js]: https://img.shields.io/badge/Heroku-20232A?style=for-the-badge&logo=heroku
+[Heroku-url]: https://dashboard.heroku.com/
