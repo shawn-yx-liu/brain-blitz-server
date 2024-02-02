@@ -5,6 +5,7 @@ This is the server code for the [Brain Blitz](https://github.com/shawn8913/brain
 
 ### Built With
 [![Javascript][Javascript.js]][Javascript-url]\
+[![Express][Express.js]][Express-url]\
 [![Sockets.io][Sockets.js]][Sockets-url]\
 [![Webpack][Webpack.js]][Webpack-url]
 
@@ -30,10 +31,12 @@ $ npm start
 * [Shawn Liu](https://github.com/shawn8913)
 
 
-[Sockets.js]: https://img.shields.io/badge/Sockets.io-20232A?style=for-the-badge&logo=socketdotio&logoColor=61DAFB
-[Sockets-url]: https://socket.io/
 [Javascript.js]: https://img.shields.io/badge/Javascript-20232A?style=for-the-badge&logo=javascript
 [Javascript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+[Express.js]: https://img.shields.io/badge/Express-20232A?style=for-the-badge&logo=express
+[Express-url]: https://expressjs.com/
+[Sockets.js]: https://img.shields.io/badge/Sockets.io-20232A?style=for-the-badge&logo=socketdotio&logoColor=61DAFB
+[Sockets-url]: https://socket.io/
 [Webpack.js]: https://img.shields.io/badge/Webpack-20232A?style=for-the-badge&logo=webpack
 [Webpack-url]: https://webpack.js.org/
 [Heroku.js]: https://img.shields.io/badge/Heroku-20232A?style=for-the-badge&logo=heroku
